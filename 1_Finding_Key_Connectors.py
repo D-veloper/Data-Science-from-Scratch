@@ -1,4 +1,5 @@
 from __future__ import division  # apparently, integer division is lame lol
+from collections import Counter
 
 # list of users, detail of each user stored as dict allowing easy modification later
 users = [
@@ -28,7 +29,7 @@ for i, j in friendships:
     users[j]["friends"].append(users[i])
 
 
-# what's the average number of connections?
+# Question: What's the average number of connections?
 def number_of_friends(user):  # find total number of connections by summing lengths of all friends list
     return len(user["friends"])  # how many friends does user have?
 
@@ -39,9 +40,9 @@ total_connections = sum(number_of_friends(user) for user in users)
 num_users = len(users)
 avg_connections = total_connections / num_users
 
-print(avg_connections)
+print(f"Average number of connections is {avg_connections}")
 
-# who are the most connected people?
+# Question: who are the most connected people?
 num_friends_by_id = [(user["id"], number_of_friends(user)) for user in users]  # list user_id, number_of_friends
 
 # since there aren't many users, we'll sort them from most to the least friends
@@ -66,3 +67,19 @@ for i, user_connection in enumerate(num_friends_by_id):
         break
 
 print(f"The users with the highest number of connections are {users_with_hc}")
+
+# Feature: "Data Scientists You May Know" suggester.
+# a user might know the friends of friends.
+
+
+def friends_of_friends_ids_bad(user):
+    # for each user's friends, iterate over the person's friends and compile results.
+    # "foaf" is short for "friend of a friend"
+    return [foaf["id"]
+            for friend in user["friends"]  # for each of user's friends
+            for foaf in friend["friends"]]  # get each of _their_ friends
+
+
+def not_the_same(user, other_user):
+    # two users are not the same if they have different ids
+    return user["id"] != other_user["id"]
